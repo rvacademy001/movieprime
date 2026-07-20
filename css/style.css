@@ -690,3 +690,45 @@ textarea{min-height:90px; resize:vertical;}
     font-size: 28px;
   }
 }
+
+/* Ad Containers */
+.ad-container-leaderboard {
+  max-width: 1200px;
+  margin: 30px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 20px;
+}
+.ad-container-square {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.ad-container-banner {
+  max-width: 1200px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 20px;
+}
+.ad-desktop {
+  display: block;
+}
+.ad-mobile {
+  display: none;
+}
+
+@media(max-width: 768px) {
+  .ad-desktop {
+    display: none;
+  }
+  .ad-mobile {
+    display: block;
+  }
+}

@@ -47,18 +47,8 @@ create table if not exists watchlist (
 );
 
 -- 3) Row Level Security (RLS)
-alter table movies enable row level security;
+alter table movies disable row level security;
 alter table watchlist enable row level security;
-
--- Movies Table Policies:
--- Anyone can read movies
-drop policy if exists "Public read movies" on movies;
-create policy "Public read movies" on movies for select to anon, authenticated using (true);
-
--- Only authenticated admins can write/update/delete.
--- Note: We authorize write access to authenticated users. You can restrict this to your admin email via triggers/policies if needed.
-drop policy if exists "Admin write movies" on movies;
-create policy "Admin write movies" on movies for all to authenticated using (true) with check (true);
 
 
 -- Watchlist Table Policies:

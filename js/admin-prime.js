@@ -9,17 +9,13 @@ const logoutBtn    = document.getElementById('logoutBtn');
 // ---------- Session Verification ----------
 async function checkSession(){
   const isLogged = sessionStorage.getItem('mp_admin_logged') === 'true';
-  const {data:{session}} = await supabase.auth.getSession();
   
-  if(isLogged && session && session.user.email === 'MovieprimeAdmin@movieprime.com'){
+  if(isLogged){
     loginPanel.style.display = 'none';
     adminContent.style.display = 'block';
     logoutBtn.style.display = 'inline-block';
     loadMovies();
   } else {
-    if(!session || session.user.email !== 'MovieprimeAdmin@movieprime.com'){
-      sessionStorage.removeItem('mp_admin_logged');
-    }
     loginPanel.style.display = 'block';
     adminContent.style.display = 'none';
     logoutBtn.style.display = 'none';
@@ -27,48 +23,23 @@ async function checkSession(){
 }
 
 // ---------- Authentication Action ----------
-document.getElementById('loginBtn').addEventListener('click', async ()=>{
+document.getElementById('loginBtn').addEventListener('click', ()=>{
   const username = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const msg = document.getElementById('loginMsg');
-  msg.textContent = 'Verifying admin credentials…'; msg.className='state-msg';
 
-  if (username !== 'MovieprimeAdmin' || password !== 'Prashan2002') {
-    msg.textContent = 'Invalid credentials. Only the main Administrator account can access this panel.';
-    msg.className='state-msg error';
-    return;
-  }
-
-  const adminEmail = 'MovieprimeAdmin@movieprime.com';
-  let {data, error} = await supabase.auth.signInWithPassword({email: adminEmail, password});
-  
-  if (error) {
-    // If the account has not been registered in Supabase auth yet, auto-provision it
-    if (error.message.includes("Invalid login credentials") || error.message.includes("Email not confirmed")) {
-      msg.textContent = 'Provisioning database admin account…';
-      const {error: signUpError} = await supabase.auth.signUp({email: adminEmail, password});
-      if (!signUpError) {
-        const retry = await supabase.auth.signInWithPassword({email: adminEmail, password});
-        error = retry.error;
-        data = retry.data;
-      } else {
-        error = signUpError;
-      }
-    }
-  }
-
-  if(error){
-    msg.textContent = 'Database login error: ' + error.message; msg.className='state-msg error';
-  } else {
+  if (username === 'MovieprimeAdmin' && password === 'Prashan2002') {
     msg.textContent = '';
     sessionStorage.setItem('mp_admin_logged', 'true');
     checkSession();
+  } else {
+    msg.textContent = 'Invalid credentials. Only the main Administrator account can access this panel.';
+    msg.className='state-msg error';
   }
 });
 
-logoutBtn.addEventListener('click', async ()=>{
+logoutBtn.addEventListener('click', ()=>{
   sessionStorage.removeItem('mp_admin_logged');
-  await supabase.auth.signOut();
   checkSession();
 });
 
