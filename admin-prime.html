@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Prime — Hidden Admin Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">Movie<span>Prime</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="category.html">Categories</a>
+      <a href="member.html">Member</a>
+    </nav>
+    <button class="btn secondary" id="logoutBtn" style="display:none;margin:0;">Log out</button>
+  </div>
+</header>
+<div class="sprocket-rule"></div>
+
+<div class="admin-shell">
+
+  <!-- ADMIN LOGIN PANEL -->
+  <div class="panel" id="loginPanel">
+    <h2 style="font-size:26px; text-align:center;">Admin Portal</h2>
+    <p style="color:var(--muted); text-align:center; font-size:14px; margin-bottom:20px;">Please authenticate to access the movie database manager.</p>
+    
+    <label>Admin Username</label>
+    <input type="text" id="loginEmail" placeholder="MovieprimeAdmin">
+    
+    <label>Password</label>
+    <input type="password" id="loginPassword" placeholder="••••••••">
+    
+    <button class="btn" id="loginBtn" style="width:100%">Log In</button>
+    <p class="state-msg" id="loginMsg" style="text-align:center;"></p>
+  </div>
+
+  <!-- ADMIN CONTENT (hidden until logged in) -->
+  <div id="adminContent" style="display:none;">
+
+    <div class="panel">
+      <h2 style="font-size:26px" id="formTitle">Add Premium Movie</h2>
+      <p style="color:var(--muted); font-size:13px; margin:4px 0 20px;">Fill out the fields below to publish a movie with download options.</p>
+      
+      <input type="hidden" id="movieId">
+
+      <label>Movie Title</label>
+      <input type="text" id="fTitle" placeholder="e.g. Interstellar">
+
+      <div class="row">
+        <div>
+          <label>Category / Genre</label>
+          <input type="text" id="fCategory" placeholder="e.g. Action, Sci-Fi, Sinhala">
+        </div>
+        <div>
+          <label>Release Year</label>
+          <input type="number" id="fYear" placeholder="2024">
+        </div>
+        <div>
+          <label>Rating (0–10)</label>
+          <input type="number" step="0.1" id="fRating" placeholder="8.5">
+        </div>
+      </div>
+
+      <label>Description / Synopsis</label>
+      <textarea id="fDescription" placeholder="Short description of the film..."></textarea>
+
+      <label>Poster Image (Google Drive link or Direct URL)</label>
+      <input type="text" id="fDrive" placeholder="https://drive.google.com/file/d/XXXXXXX/view or direct image link">
+      <img id="fPreview" class="preview-thumb" style="display:none">
+
+      <label>Trailer URL (YouTube Link)</label>
+      <input type="text" id="fTrailer" placeholder="https://www.youtube.com/watch?v=zSWdZVtXT7E">
+
+      <!-- Telegram Download Links by Quality -->
+      <h3 style="font-size:20px; color:var(--primary); margin:24px 0 10px; border-bottom:1px solid var(--line); padding-bottom:8px;">Telegram Quality Links</h3>
+      
+      <div class="row">
+        <div>
+          <label>480p Telegram Link</label>
+          <input type="text" id="fLink480" placeholder="https://t.me/yourchannel/12">
+        </div>
+        <div>
+          <label>720p Telegram Link</label>
+          <input type="text" id="fLink720" placeholder="https://t.me/yourchannel/13">
+        </div>
+        <div>
+          <label>1080p Telegram Link</label>
+          <input type="text" id="fLink1080" placeholder="https://t.me/yourchannel/14">
+        </div>
+      </div>
+
+      <label>General Download/Watch Link (Fallback)</label>
+      <input type="text" id="fDownload" placeholder="https://...">
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="fTrending">
+        <label style="margin:0">Show in Featured/Trending Row</label>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn" id="saveBtn">Publish Movie</button>
+        <button class="btn secondary" id="cancelEditBtn" style="display:none;">Cancel edit</button>
+      </div>
+      <p class="state-msg" id="formMsg"></p>
+    </div>
+
+    <!-- MOVIE DATABASE TABLE -->
+    <div class="panel">
+      <h2 style="font-size:26px; margin-bottom:16px;">Published Movies</h2>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Poster</th><th>Title</th><th>Category</th><th>Trending</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="movieTableBody">
+            <tr><td colspan="5">Loading movie catalog...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Movie Prime</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/admin-prime.js"></script>
+</body>
+</html>

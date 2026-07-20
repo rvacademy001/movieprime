@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Prime — Movie Details</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .detail{max-width:1000px;margin:0 auto;padding:40px 20px;display:grid;grid-template-columns:280px 1fr;gap:32px;}
+  .detail .poster{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);aspect-ratio:2/3;background:var(--surface-2);animation:fadeInUp .5s ease both;}
+  .detail .poster img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease;}
+  .detail .poster img.loaded{opacity:1;}
+  .detail h1{font-size:44px;margin:0 0 8px;animation:fadeInUp .55s ease .08s both;}
+  .detail .meta{color:var(--muted);font-size:14px;margin-bottom:16px;display:flex;gap:14px;flex-wrap:wrap;animation:fadeInUp .55s ease .14s both;}
+  .detail .cat-tag{background:var(--surface-2);border:1px solid var(--line);padding:4px 10px;border-radius:20px;font-size:12px;}
+  .detail p.desc{line-height:1.7;color:var(--text);animation:fadeInUp .55s ease .2s both;}
+  .detail .btn{animation:fadeInUp .55s ease .26s both;}
+  @media(max-width:640px){.detail{grid-template-columns:1fr;}.detail .poster{max-width:220px;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">Movie<span>Prime</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="category.html">Categories</a>
+      <a href="member.html">Member</a>
+    </nav>
+    <div class="lang-toggle">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="si">සිං</button>
+    </div>
+  </div>
+</header>
+<div class="sprocket-rule"></div>
+
+<div class="detail" id="detail">
+  <p style="color:var(--muted)">Loading movie details...</p>
+</div>
+
+<!-- Modal Popup for Telegram Quality Selection -->
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal-box">
+    <h3 id="modalTitle" data-en="Select Quality" data-si="වීඩියෝ තත්ත්වය තෝරන්න">Select Quality</h3>
+    <p data-en="Choose your preferred download quality. The link will open directly in Telegram."
+       data-si="ඔබ කැමති ඩවුන්ලෝඩ් තත්ත්වය තෝරන්න. ලින්ක් එක Telegram හරහා විවෘත වේ.">
+       Choose your preferred download quality. The link will open directly in Telegram.
+    </p>
+    <div class="quality-list" id="qualityList">
+      <!-- Injected Dynamically -->
+    </div>
+    <span class="modal-close-btn" id="closeModal" data-en="Cancel" data-si="අවලංගු කරන්න">Cancel</span>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Movie Prime</span>
+    <span data-en="Built for movie lovers." data-si="චිත්‍රපට ලෝලීන් සඳහා.">Built for movie lovers.</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+let currentMovie = null;
+let watchlistRecord = null;
+let currentUserId = null;
+
+// ---------- language toggle (English / Sinhala) ----------
+function applyLang(lang){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    el.textContent = lang === 'si' ? (el.dataset.si || el.dataset.en) : el.dataset.en;
+  });
+  document.querySelectorAll('.lang-toggle button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  localStorage.setItem('mp_lang', lang);
+  updateWatchlistBtnUI();
+}
+
+function initLangToggle(){
+  const saved = localStorage.getItem('mp_lang') || 'en';
+  applyLang(saved);
+  document.querySelectorAll('.lang-toggle button').forEach(b=>{
+    b.addEventListener('click', ()=> applyLang(b.dataset.lang));
+  });
+}
+
+function getYoutubeEmbedUrl(url) {
+  if (!url) return '';
+  if (url.includes('youtube.com/embed/')) return url;
+  
+  let videoId = '';
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  
+  if (match && match[2].length === 11) {
+    videoId = match[2];
+  }
+  
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+}
+
+// ---------- Watchlist Button Logic ----------
+async function checkWatchlistState() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  
+  currentUserId = session.user.id;
+  const { data, error } = await supabase
+    .from('watchlist')
+    .select('*')
+    .eq('user_id', currentUserId)
+    .eq('movie_id', currentMovie.id)
+    .maybeSingle();
+
+  if (!error && data) {
+    watchlistRecord = data;
+  } else {
+    watchlistRecord = null;
+  }
+  updateWatchlistBtnUI();
+}
+
+function updateWatchlistBtnUI() {
+  const btn = document.getElementById('watchlistBtn');
+  if (!btn) return;
+  
+  const lang = localStorage.getItem('mp_lang') || 'en';
+  
+  if (watchlistRecord) {
+    btn.classList.add('active');
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>${lang === 'si' ? 'වොච්ලිස්ට් එකෙන් මකන්න' : 'Saved to Watchlist'}</span>
+    `;
+  } else {
+    btn.classList.remove('active');
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+      <span>${lang === 'si' ? 'වොච්ලිස්ට් එකට එක් කරන්න' : 'Save to Watchlist'}</span>
+    `;
+  }
+}
+
+async function toggleWatchlist() {
+  if (!currentUserId) {
+    const lang = localStorage.getItem('mp_lang') || 'en';
+    alert(lang === 'si' ? 'කරුණාකර පළමුව සාමාජිකයෙකු ලෙස ඇතුළු වන්න.' : 'Please log in as a member first.');
+    window.location.href = 'member.html';
+    return;
+  }
+  
+  if (watchlistRecord) {
+    // Delete
+    const { error } = await supabase
+      .from('watchlist')
+      .delete()
+      .eq('id', watchlistRecord.id);
+      
+    if (!error) {
+      watchlistRecord = null;
+      updateWatchlistBtnUI();
+    }
+  } else {
+    // Insert
+    const { data, error } = await supabase
+      .from('watchlist')
+      .insert({
+        user_id: currentUserId,
+        movie_id: currentMovie.id
+      })
+      .select()
+      .single();
+      
+    if (!error && data) {
+      watchlistRecord = data;
+      updateWatchlistBtnUI();
+    }
+  }
+}
+
+// ---------- Modal Popup Trigger ----------
+function openDownloadModal() {
+  const modal = document.getElementById('downloadModal');
+  const qList = document.getElementById('qualityList');
+  const lang = localStorage.getItem('mp_lang') || 'en';
+  
+  let html = '';
+  
+  if (currentMovie.link_480p) {
+    html += `
+      <a class="quality-btn" href="${currentMovie.link_480p}" target="_blank" rel="noopener">
+        <span>480p Standard</span>
+        <span class="badge-quality">Telegram</span>
+      </a>`;
+  }
+  if (currentMovie.link_720p) {
+    html += `
+      <a class="quality-btn" href="${currentMovie.link_720p}" target="_blank" rel="noopener">
+        <span>720p High Definition</span>
+        <span class="badge-quality">Telegram</span>
+      </a>`;
+  }
+  if (currentMovie.link_1080p) {
+    html += `
+      <a class="quality-btn" href="${currentMovie.link_1080p}" target="_blank" rel="noopener">
+        <span>1080p Full HD</span>
+        <span class="badge-quality">Telegram</span>
+      </a>`;
+  }
+  
+  // Fallback to general download link if quality links are empty
+  if (!html && currentMovie.download_link) {
+    html += `
+      <a class="quality-btn" href="${currentMovie.download_link}" target="_blank" rel="noopener">
+        <span>${lang === 'si' ? 'බාගත කරන්න' : 'Direct Download'}</span>
+        <span class="badge-quality">Link</span>
+      </a>`;
+  }
+  
+  if (!html) {
+    html = `<p style="color:var(--muted); font-size: 13px;">${lang === 'si' ? 'කිසිදු බාගත කිරීමේ ලින්ක් එකක් සපයා නැත.' : 'No download links available.'}</p>`;
+  }
+  
+  qList.innerHTML = html;
+  modal.classList.add('open');
+}
+
+function closeDownloadModal() {
+  document.getElementById('downloadModal').classList.remove('open');
+}
+
+// ---------- Detail Fetcher ----------
+async function loadMovie(){
+  const id = new URLSearchParams(location.search).get('id');
+  const wrap = document.getElementById('detail');
+  if(!id){ wrap.innerHTML = '<p>Movie not found.</p>'; return; }
+
+  const {data:m, error} = await supabase.from('movies').select('*').eq('id', id).single();
+  if(error || !m){ wrap.innerHTML = '<p>Movie not found.</p>'; return; }
+
+  currentMovie = m;
+  const poster = m.poster_url || driveLinkToImageUrl(m.drive_link) || '';
+  document.title = `Movie Prime — ${m.title}`;
+
+  // Check if trailer is available
+  const youtubeEmbed = getYoutubeEmbedUrl(m.trailer_link || m.download_link);
+  let trailerHTML = '';
+  if (youtubeEmbed) {
+    trailerHTML = `
+      <div class="trailer-container">
+        <iframe src="${youtubeEmbed}" title="${m.title} Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    `;
+  }
+
+  wrap.innerHTML = `
+    <div class="poster"><img src="${poster}" alt="${m.title}" onload="this.classList.add('loaded')" onerror="this.style.opacity=0.15"></div>
+    <div>
+      <h1 class="display">${m.title}</h1>
+      <div class="meta">
+        ${m.year ? `<span>${m.year}</span>` : ''}
+        ${m.rating ? `<span>★ ${m.rating}</span>` : ''}
+        <span class="cat-tag">${m.category || ''}</span>
+      </div>
+      <p class="desc">${m.description ? m.description.replace(/\n/g,'<br>') : 'No description added yet.'}</p>
+      
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <!-- SVG Download Button -->
+          <a class="download-btn-img" id="downloadBtn" aria-label="Download Movie">
+            <svg width="220" height="54" viewBox="0 0 220 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="dlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffcc00" />
+                  <stop offset="100%" stop-color="#cc9900" />
+                </linearGradient>
+                <filter id="dlGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#ffcc00" flood-opacity="0.3" />
+                </filter>
+              </defs>
+              <rect x="2" y="2" width="216" height="50" rx="25" fill="url(#dlGrad)" filter="url(#dlGlow)" />
+              <rect x="2" y="2" width="216" height="25" rx="12.5" fill="white" fill-opacity="0.1" />
+              <g transform="translate(24, 13)">
+                <circle cx="14" cy="14" r="12" stroke="#000000" stroke-width="2.5" fill="none" />
+                <path d="M14 8V20M14 20L9 15M14 20L19 15" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+              <text x="64" y="32" fill="#000000" font-family="'Inter', sans-serif" font-weight="800" font-size="13" letter-spacing="0.75px">DOWNLOAD NOW</text>
+            </svg>
+          </a>
+
+          <!-- Watchlist Toggle Button -->
+          <button class="watchlist-btn" id="watchlistBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span>Save to Watchlist</span>
+          </button>
+        </div>
+        ${trailerHTML}
+      </div>
+    </div>`;
+
+  // Bind Listeners
+  document.getElementById('downloadBtn').addEventListener('click', openDownloadModal);
+  document.getElementById('watchlistBtn').addEventListener('click', toggleWatchlist);
+  
+  // Verify watchlist item exists in user log
+  checkWatchlistState();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initLangToggle();
+  loadMovie();
+  
+  // Close Modal triggers
+  document.getElementById('closeModal').addEventListener('click', closeDownloadModal);
+  document.getElementById('downloadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'downloadModal') closeDownloadModal();
+  });
+});
+</script>
+</body>
+</html>
