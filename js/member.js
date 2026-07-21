@@ -2,6 +2,8 @@
 // Movie Prime — Member Area & Watchlist Logic
 // ==========================================================
 
+const supabase = window.supabaseClient;
+
 const authPanel       = document.getElementById('authPanel');
 const memberDashboard = document.getElementById('memberDashboard');
 const logoutBtn       = document.getElementById('logoutBtn');

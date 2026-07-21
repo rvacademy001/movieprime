@@ -5,12 +5,10 @@
 const SUPABASE_URL = "https://kkuqbdbbxweuqzauhszu.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdXFiZGJieHdldXF6YXVoc3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0ODA3NTIsImV4cCI6MjEwMDA1Njc1Mn0.c-JGhJ9jFlh8ePKThx7hQ2Xb9nCLZTjk9T5A5jIhQck";
 
-let supabase;
-let isDemoMode = false;
+window.isDemoMode = false;
 
 // Check if project has default credentials placeholder
 if (SUPABASE_URL.includes("YOUR-PROJECT-REF") || SUPABASE_ANON_KEY.includes("YOUR-ANON-PUBLIC-KEY")) {
-  isDemoMode = true;
   window.isDemoMode = true;
 
   // Pre-seed sample movies into localStorage if empty
@@ -42,62 +40,6 @@ if (SUPABASE_URL.includes("YOUR-PROJECT-REF") || SUPABASE_ANON_KEY.includes("YOU
       trailer_link: "https://www.youtube.com/embed/YoHD9XEInc0",
       trending: true,
       created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString()
-    },
-    {
-      id: "demo-3",
-      title: "Dune: Part Two",
-      category: "Sci-Fi",
-      year: 2024,
-      rating: 8.6,
-      description: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
-      drive_link: "",
-      poster_url: "https://images.unsplash.com/photo-1547483238-f400e65ccd56?w=780",
-      download_link: "https://www.youtube.com/watch?v=Way9Dexny3w",
-      trailer_link: "https://www.youtube.com/embed/Way9Dexny3w",
-      trending: true,
-      created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString()
-    },
-    {
-      id: "demo-4",
-      title: "The Dark Knight",
-      category: "Action",
-      year: 2008,
-      rating: 9.0,
-      description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-      drive_link: "",
-      poster_url: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=780",
-      download_link: "https://www.youtube.com/watch?v=LDG9bisJEaI",
-      trailer_link: "https://www.youtube.com/embed/LDG9bisJEaI",
-      trending: false,
-      created_at: new Date(Date.now() - 1000 * 60 * 240).toISOString()
-    },
-    {
-      id: "demo-5",
-      title: "Spirited Away",
-      category: "Anime",
-      year: 2001,
-      rating: 8.6,
-      description: "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits, and where humans are changed into beasts.",
-      drive_link: "",
-      poster_url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=780",
-      download_link: "https://www.youtube.com/watch?v=ByXuk9QqQkk",
-      trailer_link: "https://www.youtube.com/embed/ByXuk9QqQkk",
-      trending: false,
-      created_at: new Date(Date.now() - 1000 * 60 * 300).toISOString()
-    },
-    {
-      id: "demo-6",
-      title: "The Matrix",
-      category: "Sci-Fi",
-      year: 1999,
-      rating: 8.7,
-      description: "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
-      drive_link: "",
-      poster_url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=780",
-      download_link: "https://www.youtube.com/watch?v=m8e-FF8MsqU",
-      trailer_link: "https://www.youtube.com/embed/m8e-FF8MsqU",
-      trending: false,
-      created_at: new Date(Date.now() - 1000 * 60 * 360).toISOString()
     }
   ];
 
@@ -106,7 +48,7 @@ if (SUPABASE_URL.includes("YOUR-PROJECT-REF") || SUPABASE_ANON_KEY.includes("YOU
   }
 
   // Simulated Supabase SDK client
-  supabase = {
+  window.supabaseClient = {
     auth: {
       getSession: async () => {
         const sessionJson = localStorage.getItem("mp_session");
@@ -118,7 +60,7 @@ if (SUPABASE_URL.includes("YOUR-PROJECT-REF") || SUPABASE_ANON_KEY.includes("YOU
           localStorage.setItem("mp_session", JSON.stringify(session));
           return { data: { session }, error: null };
         } else {
-          return { data: null, error: { message: "Invalid email or password. In Demo Mode, use admin@movieprime.com and admin123" } };
+          return { data: null, error: { message: "Invalid email or password." } };
         }
       },
       signOut: async () => {
@@ -220,7 +162,7 @@ if (SUPABASE_URL.includes("YOUR-PROJECT-REF") || SUPABASE_ANON_KEY.includes("YOU
   };
 } else {
   // Real Supabase client configuration
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 // ==========================================================

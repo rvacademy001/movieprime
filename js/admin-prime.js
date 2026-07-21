@@ -2,6 +2,8 @@
 // Movie Prime — Admin Prime Logic
 // ==========================================================
 
+const supabase = window.supabaseClient;
+
 const loginPanel   = document.getElementById('loginPanel');
 const adminContent = document.getElementById('adminContent');
 const logoutBtn    = document.getElementById('logoutBtn');

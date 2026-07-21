@@ -2,6 +2,8 @@
 // Movie Prime — shared frontend logic (home + category pages)
 // ==========================================================
 
+const supabase = window.supabaseClient;
+
 // Global lists to store movies for real-time search filtering
 let allTrendingMovies = [];
 let allLatestMovies = [];
