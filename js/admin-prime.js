@@ -115,7 +115,17 @@ saveBtn.addEventListener('click', async ()=>{
   }
 
   if(error){
-    msg.textContent = error.message; msg.className='state-msg error';
+    console.error("Supabase Save Error Details:", error);
+    let hint = "";
+    if (error.message.includes("relation") || error.message.includes("does not exist")) {
+      hint = " (හේතුව: Supabase database එකේ 'movies' table එක සෑදී නැත. කරුණාකර sql/schema.sql එක Supabase SQL Editor එකේ Run කරන්න.)";
+    } else if (error.message.includes("row-level security") || error.status === 401 || error.status === 403 || error.message.includes("violates row-level security policy")) {
+      hint = " (හේතුව: Database එකේ RLS ආරක්ෂාව සක්‍රීයව පවතී. කරුණාකර Supabase dashboard -> SQL Editor එකේ ALTER TABLE movies DISABLE ROW LEVEL SECURITY; run කරන්න.)";
+    } else if (error.message.includes("column")) {
+      hint = " (හේතුව: Database එකේ අලුත් quality columns (link_480p, etc.) සෑදී නැත. කරුණාකර අලුත්ම sql/schema.sql එක Supabase SQL Editor එකේ Run කරන්න.)";
+    }
+    msg.innerHTML = `<strong>Error:</strong> ${error.message}${hint}`; 
+    msg.className='state-msg error';
   } else {
     msg.textContent = 'Movie published successfully! ✓'; msg.className='state-msg ok';
     clearForm();
