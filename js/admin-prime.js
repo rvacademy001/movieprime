@@ -171,8 +171,11 @@
 
   // Handle Edit/Delete button triggers
   document.getElementById('movieTableBody').addEventListener('click', async (e)=>{
-    const editId = e.target.getAttribute('data-edit');
-    const delId = e.target.getAttribute('data-del');
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    const editId = btn.getAttribute('data-edit');
+    const delId = btn.getAttribute('data-del');
+    console.log("Admin list action clicked. Edit ID:", editId, "Delete ID:", delId);
     if(editId) editMovie(editId);
     if(delId) await deleteMovie(delId);
   });
