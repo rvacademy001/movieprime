@@ -152,11 +152,12 @@ nav.main-nav a:hover::after, nav.main-nav a.active::after{width:100%;}
   overflow:hidden;
   background-size:cover;
   background-position:center top;
-  min-height:520px;
+  min-height:380px;
   display:flex;
   align-items:center;
   border:1px solid var(--line);
   animation:fadeIn .8s ease both;
+  transition: background-image 0.8s ease-in-out;
 }
 .hero-banner::after{
   content:'';
@@ -170,7 +171,7 @@ nav.main-nav a:hover::after, nav.main-nav a.active::after{width:100%;}
   position:relative;
   z-index:2;
   max-width:620px;
-  padding:48px;
+  padding:36px 48px;
 }
 .hero-banner-content .eyebrow{
   color:var(--primary);
@@ -178,41 +179,48 @@ nav.main-nav a:hover::after, nav.main-nav a.active::after{width:100%;}
   font-size:12px;
   letter-spacing:.25em;
   text-transform:uppercase;
-  margin-bottom:14px;
+  margin-bottom:10px;
 }
 .hero-banner-content h1{
-  font-size:clamp(38px, 5.5vw, 68px);
-  margin:0 0 16px;
-  line-height:1;
+  font-size:clamp(34px, 5vw, 56px);
+  margin:0 0 12px;
+  line-height:1.1;
   color:#fff;
 }
 .hero-banner-content .meta{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:20px;
-}
-.hero-banner-content .meta .rating{
-  color:var(--primary);
-  font-weight:700;
-}
-.hero-banner-content .meta .category-tag{
-  background:var(--surface-2);
-  border:1px solid var(--line);
-  padding:2px 10px;
-  border-radius:12px;
-  font-size:11px;
-  color:var(--text);
-  font-weight:500;
+  display:none;
 }
 .hero-banner-content p.desc{
-  color:var(--text);
-  opacity:0.85;
-  font-size:15px;
-  line-height:1.6;
-  margin:0 0 28px;
+  display:none;
+}
+
+/* Featured Hero Meta Badges */
+.hero-meta-badge-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+}
+.hero-badge-item {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.hero-badge-item.year {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.hero-badge-item.rating {
+  background: rgba(255, 204, 0, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+}
+.hero-badge-item.category {
+  background: rgba(255,255,255,0.05);
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 /* ---------- sections ---------- */
@@ -800,4 +808,42 @@ textarea{min-height:90px; resize:vertical;}
   .ad-mobile {
     display: block;
   }
+}
+
+/* Card Socials Styling */
+.card-socials {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+}
+.card-soc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  transition: all 0.2s ease;
+}
+.card-soc-btn:hover {
+  color: #000;
+  transform: scale(1.15);
+}
+.card-soc-btn.tg:hover { background: #0088cc; color: #fff; }
+.card-soc-btn.wa:hover { background: #25d366; color: #fff; }
+.card-soc-btn.fb:hover { background: #1877f2; color: #fff; }
+.card-soc-btn svg {
+  fill: currentColor;
+}
+
+/* Flex centering for card poster wrapper images */
+.poster-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
