@@ -52,11 +52,11 @@
   <div class="header-inner">
     <a href="index.html" class="logo">Movie<span>Prime</span></a>
     <nav class="main-nav">
-      <a href="index.html" data-en="Home" data-si="මුල් පිටුව">Home</a>
-      <a href="category.html" data-en="Categories" data-si="කාණ්ඩ">Categories</a>
-      <a href="member.html" data-en="Member" data-si="සාමාජික">Member</a>
-      <a href="about.html" data-en="About Us" data-si="අප ගැන">About Us</a>
-      <a href="contact.html" data-en="Contact" data-si="සම්බන්ධ වන්න">Contact</a>
+      <a href="index.html?v=1.1" data-en="Home" data-si="මුල් පිටුව">Home</a>
+      <a href="category.html?v=1.1" data-en="Categories" data-si="කාණ්ඩ">Categories</a>
+      <a href="member.html?v=1.1" data-en="Member" data-si="සාමාජික">Member</a>
+      <a href="about.html?v=1.1" data-en="About Us" data-si="අප ගැන">About Us</a>
+      <a href="contact.html?v=1.1" data-en="Contact" data-si="සම්බන්ධ වන්න">Contact</a>
     </nav>
     <div class="lang-toggle">
       <button data-lang="en" class="active">EN</button>
@@ -88,9 +88,9 @@
 <div class="modal-overlay" id="downloadModal">
   <div class="modal-box">
     <h3 id="modalTitle" data-en="Select Quality" data-si="වීඩියෝ තත්ත්වය තෝරන්න">Select Quality</h3>
-    <p data-en="Choose your preferred download quality. The link will open directly in Telegram."
-       data-si="ඔබ කැමති ඩවුන්ලෝඩ් තත්ත්වය තෝරන්න. ලින්ක් එක Telegram හරහා විවෘත වේ.">
-       Choose your preferred download quality. The link will open directly in Telegram.
+    <p data-en="Choose your preferred quality options. The link will open directly in Telegram."
+       data-si="ඔබ කැමති වීඩියෝ මට්ටම තෝරන්න. ලින්ක් එක Telegram හරහා විවෘත වේ.">
+       Choose your preferred quality options. The link will open directly in Telegram.
     </p>
     <div class="quality-list" id="qualityList">
       <!-- Injected Dynamically -->
@@ -132,8 +132,7 @@
       <a href="https://t.me/movieprimeytsl" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:none; font-weight:700;">#️⃣ Telegram Channel</a>
       <a href="https://whatsapp.com/channel/0029VbDDB8K8PgsPkQHHoK34" target="_blank" rel="noopener" style="color:#25d366; text-decoration:none; font-weight:700;">🟢 WhatsApp Channel</a>
       <a href="https://web.facebook.com/profile.php?id=61590992003172" target="_blank" rel="noopener" style="color:#1877f2; text-decoration:none; font-weight:700;">💙 Facebook Page</a>
-      <a href="https://wa.me/94704890283" target="_blank" rel="noopener" style="color:#25d366; text-decoration:none; font-weight:700;">📞 WhatsApp: +94 70 489 0283</a>
-      <a href="mailto:Movieprimeytsl@gmail.com" style="color:var(--text); text-decoration:none; font-weight:700;">✉️ Movieprimeytsl@gmail.com</a>
+      <a href="privacy.html?v=1.1" style="color:var(--crimson); text-decoration:none; font-weight:700;">⚖️ Privacy & Disclaimer</a>
     </div>
     <div style="font-size:12px; color:var(--muted); margin-top:8px;">
       <span>© 2026 Movie Prime. </span>
@@ -299,7 +298,7 @@ function openDownloadModal() {
   if (!html && currentMovie.download_link) {
     html += `
       <a class="quality-btn" href="${currentMovie.download_link}" target="_blank" rel="noopener">
-        <span>${lang === 'si' ? 'බාගත කරන්න' : 'Direct Download'}</span>
+        <span>${lang === 'si' ? 'සෘජු පිවිසුම' : 'Direct Access'}</span>
         <span class="badge-quality">Link</span>
       </a>`;
   }
