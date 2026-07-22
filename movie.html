@@ -215,6 +215,11 @@ let currentMovie = null;
 let watchlistRecord = null;
 let currentUserId = null;
 
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 // ---------- language toggle (English / Sinhala) ----------
 function applyLang(lang){
   document.querySelectorAll('[data-en]').forEach(el=>{
