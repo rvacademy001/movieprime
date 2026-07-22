@@ -4,20 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Movie Prime — Movie Details</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=1.1">
 <!-- Adsterra Popunder -->
 <script src="https://pl30456703.effectivecpmnetwork.com/f2/62/8a/f2628a4a9eef317d18dc7d16c447c3b6.js"></script>
 <!-- Adsterra Social Bar -->
 <script src="https://pl30456704.effectivecpmnetwork.com/04/b5/ea/04b5ea7198bd1e984e2cf7006b5a3fff.js"></script>
 <style>
   .detail{max-width:1000px;margin:0 auto;padding:40px 20px;display:grid;grid-template-columns:400px 1fr;gap:32px;}
-  .detail .poster{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;background:var(--surface-2);animation:fadeInUp .5s ease both;}
-  .detail .poster img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease;}
+  .detail .poster{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;background:var(--surface-2);animation:fadeInUp .5s ease both;position:relative;}
+  .detail .poster a{display:block;width:100%;height:100%;text-decoration:none;position:relative;}
+  /* Play/Download indicator on hover */
+  .detail .poster a::after{
+    content:'⚡ Play / Download';
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.65);
+    color:var(--primary);
+    display:flex; justify-content:center; align-items:center;
+    font-weight:700; font-size:15px;
+    opacity:0; transition:opacity 0.3s ease;
+    z-index:2;
+    text-shadow: 0 0 8px rgba(255,204,0,0.4);
+  }
+  .detail .poster a:hover::after{opacity:1;}
+  .detail .poster img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease;z-index:1;}
   .detail .poster img.loaded{opacity:1;}
   .detail h1{font-size:44px;margin:0 0 8px;animation:fadeInUp .55s ease .08s both;}
   .detail .meta{color:var(--muted);font-size:14px;margin-bottom:16px;display:flex;gap:14px;flex-wrap:wrap;animation:fadeInUp .55s ease .14s both;}
   .detail .cat-tag{background:var(--surface-2);border:1px solid var(--line);padding:4px 10px;border-radius:20px;font-size:12px;}
-  .detail p.desc{line-height:1.7;color:var(--text);animation:fadeInUp .55s ease .2s both;}
+  .detail p.desc{
+    line-height:1.8;
+    color:rgba(255,255,255,0.9);
+    animation:fadeInUp .55s ease .2s both;
+    background:rgba(255,255,255,0.03);
+    border-left: 3px solid var(--primary);
+    padding: 12px 18px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 24px;
+    font-size: 15px;
+  }
   .detail .btn{animation:fadeInUp .55s ease .26s both;}
   @media(max-width:768px){.detail{grid-template-columns:1fr;}.detail .poster{max-width:100%;}}
 </style>
@@ -306,7 +330,11 @@ async function loadMovie(){
   }
 
   wrap.innerHTML = `
-    <div class="poster"><img src="${poster}" alt="${m.title}" onload="this.classList.add('loaded')" onerror="this.style.opacity=0.15"></div>
+    <div class="poster">
+      <a href="https://www.effectivecpmnetwork.com/qhwrj18356?key=ad49ffbd96addedb2c0d8bdd05713509" target="_blank" rel="noopener" title="Play or Download Movie">
+        <img src="${poster}" alt="${m.title}" onload="this.classList.add('loaded')" onerror="this.style.opacity=0.15">
+      </a>
+    </div>
     <div>
       <h1 class="display">${m.title}</h1>
       <div class="meta">
@@ -318,26 +346,9 @@ async function loadMovie(){
       
       <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px;">
         <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-          <!-- SVG Download Button -->
+          <!-- Image Download Button -->
           <a class="download-btn-img" id="downloadBtn" aria-label="Download Movie">
-            <svg width="220" height="54" viewBox="0 0 220 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="dlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#ffcc00" />
-                  <stop offset="100%" stop-color="#cc9900" />
-                </linearGradient>
-                <filter id="dlGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#ffcc00" flood-opacity="0.3" />
-                </filter>
-              </defs>
-              <rect x="2" y="2" width="216" height="50" rx="25" fill="url(#dlGrad)" filter="url(#dlGlow)" />
-              <rect x="2" y="2" width="216" height="25" rx="12.5" fill="white" fill-opacity="0.1" />
-              <g transform="translate(24, 13)">
-                <circle cx="14" cy="14" r="12" stroke="#000000" stroke-width="2.5" fill="none" />
-                <path d="M14 8V20M14 20L9 15M14 20L19 15" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-              </g>
-              <text x="64" y="32" fill="#000000" font-family="'Inter', sans-serif" font-weight="800" font-size="13" letter-spacing="0.75px">DOWNLOAD NOW</text>
-            </svg>
+            <img src="download_btn.png" alt="Download Now" style="width:220px; height:auto; display:block; border-radius:30px;">
           </a>
 
           <!-- Watchlist Toggle Button -->

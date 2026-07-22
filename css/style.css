@@ -333,6 +333,25 @@ nav.main-nav a:hover::after, nav.main-nav a.active::after{width:100%;}
   font-size: 11px;
   border: 1px solid rgba(255, 204, 0, 0.2);
 }
+.card-body .meta-left{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-body .genre-tag{
+  background: rgba(255, 204, 0, 0.1);
+  color: var(--primary);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 204, 0, 0.15);
+}
+.card-body .year-val{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
 
 /* ---------- category chips (Scrollable on Mobile) ---------- */
 .chips{

@@ -52,34 +52,37 @@
         <div class="card-body">
           <p class="title">${escapeHtml(m.title)}</p>
           <div class="meta">
-            <span>${m.year || ''}</span>
+            <div class="meta-left">
+              <span class="genre-tag">${escapeHtml(m.category)}</span>
+              <span class="year-val">${m.year || ''}</span>
+            </div>
             ${m.rating ? `<span class="rating">★ ${m.rating}</span>` : ''}
           </div>
         </div>
       </a>`;
   }
 
-  // ---------- dynamic hero banner ----------
-  async function renderHeroBanner() {
+  // ---------- dynamic hero banner (Slideshow Carousel) ----------
+  let heroIndex = 0;
+  let heroInterval = null;
+  let heroMovies = [];
+
+  function updateHeroSlider() {
     const heroContainer = document.getElementById('heroBanner');
-    if (!heroContainer) return;
-    
-    // Try to use the top trending movie as featured, otherwise fall back to latest, otherwise static default
-    let featured = null;
-    if (allTrendingMovies.length > 0) {
-      featured = allTrendingMovies[0];
-    } else if (allLatestMovies.length > 0) {
-      featured = allLatestMovies[0];
-    }
-    
-    if (!featured) return; // Keep static placeholder defined in HTML
-    
+    if (!heroContainer || heroMovies.length === 0) return;
+
+    const featured = heroMovies[heroIndex];
     const poster = featured.poster_url || driveLinkToImageUrl(featured.drive_link) || '';
     const lang = localStorage.getItem('mp_lang') || 'en';
     const watchNowText = lang === 'si' ? 'දැන් නරඹන්න' : 'Watch Now';
     const featuredText = lang === 'si' ? 'විශේෂාංගය' : 'Featured Film';
     const ratingText = featured.rating ? `★ ${featured.rating}` : '';
     
+    // Replace newlines with <br> tags for clean line breaks in description
+    const descHTML = featured.description 
+      ? escapeHtml(featured.description).replace(/\n/g, '<br>')
+      : '';
+
     heroContainer.innerHTML = `
       <section class="hero-banner" style="background-image: url('${poster}')">
         <div class="hero-banner-content">
@@ -90,11 +93,28 @@
             ${featured.rating ? `<span class="rating">${ratingText}</span>` : ''}
             <span class="category-tag">${escapeHtml(featured.category)}</span>
           </div>
-          <p class="desc">${escapeHtml(featured.description || '')}</p>
+          <p class="desc">${descHTML}</p>
           <a href="movie.html?id=${featured.id}" class="btn">${watchNowText}</a>
         </div>
       </section>
     `;
+  }
+
+  async function renderHeroBanner() {
+    const heroContainer = document.getElementById('heroBanner');
+    if (!heroContainer) return;
+
+    heroMovies = allTrendingMovies.length > 0 ? allTrendingMovies : allLatestMovies;
+    if (heroMovies.length === 0) return;
+
+    heroIndex = 0;
+    updateHeroSlider();
+
+    if (heroInterval) clearInterval(heroInterval);
+    heroInterval = setInterval(() => {
+      heroIndex = (heroIndex + 1) % heroMovies.length;
+      updateHeroSlider();
+    }, 6000);
   }
 
   // ---------- scroll-reveal for section headers ----------

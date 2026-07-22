@@ -137,7 +137,10 @@
             <div class="card-body">
               <p class="title">${m.title}</p>
               <div class="meta">
-                <span>${m.year || ''}</span>
+                <div class="meta-left">
+                  <span class="genre-tag">${m.category || ''}</span>
+                  <span class="year-val">${m.year || ''}</span>
+                </div>
                 ${m.rating ? `<span class="rating">★ ${m.rating}</span>` : ''}
               </div>
             </div>
