@@ -46,11 +46,14 @@
     background: rgba(255,255,255,0.01);
     border: 1px dashed var(--line);
     width: 162px;
-    min-height: 602px;
+    min-height: 920px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: flex-start;
     align-items: center;
     overflow: hidden;
+    padding: 10px 0;
   }
   .specs-grid {
     display: grid;
@@ -131,8 +134,57 @@
 </header>
 <div class="sprocket-rule"></div>
 
-<div class="detail" id="detail">
-  <p style="color:var(--muted)">Loading movie details...</p>
+<div id="trailerWrap"></div>
+
+<div class="detail-grid-wrapper" style="padding:0 20px;">
+  <!-- Main Details Content -->
+  <div class="detail-main-col" id="detailMainCol">
+    <div id="detail">
+      <p style="color:var(--muted); padding:40px 0;">Loading movie details...</p>
+    </div>
+  </div>
+  
+  <!-- Right Sidebar Ads -->
+  <div class="detail-sidebar-col">
+    <h3 class="ad-title-tag">ADVERTISEMENT</h3>
+    <div class="ad-sidebar-placement">
+      <!-- Banner 1: 160x600 -->
+      <div style="width:160px; height:600px; overflow:hidden;">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : 'ae58e49682ec18c8a3d4dbd30773d7a1',
+            'format' : 'iframe',
+            'height' : 600,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/ae58e49682ec18c8a3d4dbd30773d7a1/invoke.js"></script>
+      </div>
+
+      <!-- Banner 2: 160x300 -->
+      <div style="width:160px; height:300px; overflow:hidden;">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '61701a676fb861ae36ecedaf2219ea0e',
+            'format' : 'iframe',
+            'height' : 300,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/61701a676fb861ae36ecedaf2219ea0e/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related Movies Section -->
+<div class="related-section-wrap" style="max-width:1100px; margin:40px auto 0; padding:0 20px;">
+  <h2 style="font-size:24px; color:#fff; margin-bottom:20px;" data-en="More Movies Like This" data-si="මෙයට සමාන වෙනත් චිත්‍රපට">More Movies Like This</h2>
+  <div class="grid" id="relatedMoviesGrid">
+    <p style="color:var(--muted)">Loading related movies...</p>
+  </div>
 </div>
 
 <!-- Adsterra Banner 300x250 -->
@@ -159,6 +211,9 @@
     </p>
     <div class="quality-list" id="qualityList">
       <!-- Injected Dynamically -->
+    </div>
+    <div style="margin-top:16px; margin-bottom:12px; font-size:11px; color:var(--muted); line-height:1.4; display:flex; align-items:center; gap:6px; justify-content:center; border:1px dashed var(--line); padding:8px; border-radius:6px; background:rgba(255,255,255,0.01);" data-en="💡 Tip: If an advertisement page opens, press your browser back button to get the link." data-si="💡 උපදෙස: වෙනත් වෙළඳ දැන්වීම් පිටුවක් විවෘත වුවහොත්, නැවත මෙම පිටුවට (Back) පැමිණෙන්න.">
+      💡 Tip: If an advertisement page opens, press your browser back button to get the link.
     </div>
     <span class="modal-close-btn" id="closeModal" data-en="Cancel" data-si="අවලංගු කරන්න">Cancel</span>
   </div>
@@ -468,81 +523,70 @@ async function loadMovie(){
     `;
   }
 
+  // Populate trailer wrapper statically
+  const tWrap = document.getElementById('trailerWrap');
+  if (tWrap) {
+    tWrap.innerHTML = trailerHTML;
+  }
+
   wrap.innerHTML = `
-    <!-- Top Trailer Player -->
-    ${trailerHTML}
-
-    <!-- Main Content Layout -->
-    <div class="detail-grid-wrapper">
-      <div class="detail-main-col">
-        <div class="detail-info-block">
-          <div class="poster">
-            <a href="https://www.effectivecpmnetwork.com/qhwrj18356?key=ad49ffbd96addedb2c0d8bdd05713509" target="_blank" rel="noopener" title="Play or Download Movie">
-              <img src="${poster}" alt="${m.title}" onload="this.classList.add('loaded')" onerror="this.style.opacity=0.15">
-            </a>
-          </div>
-          <div class="details-text">
-            <h1 class="display" style="margin-top:0; font-size:32px; color:#fff;">${m.title}</h1>
-            
-            <div class="meta" style="margin-bottom: 12px; display:flex; gap:14px; align-items:center; font-size:13px; color:var(--muted);">
-              ${m.year ? `<span>📅 ${m.year}</span>` : ''}
-              ${m.rating ? `<span style="color:var(--primary); font-weight:700;">★ ${m.rating} IMDb</span>` : ''}
-              <span class="cat-tag" style="background:var(--surface-2); border:1px solid var(--line); padding:2px 8px; border-radius:12px; font-size:11px; color:#fff;">${m.category || ''}</span>
-            </div>
-
-            <!-- Specifications Table/Grid -->
-            <div class="specs-grid">
-              ${m.category ? `<div class="spec-item"><strong>Genre:</strong> <span>${m.category}</span></div>` : ''}
-              ${m.year ? `<div class="spec-item"><strong>Year:</strong> <span>${m.year}</span></div>` : ''}
-              <div class="spec-item"><strong>Language:</strong> <span>${m.description && (m.description.includes('Sinhala') || m.description.includes('සිංහල')) ? 'Sinhala' : 'English / Subtitles'}</span></div>
-              <div class="spec-item"><strong>Source:</strong> <span>Official WebRip</span></div>
-            </div>
-
-            <p class="desc" style="margin-top: 16px;">${m.description ? m.description.replace(/\n/g,'<br>') : 'No description added yet.'}</p>
-            
-            <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
-              <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-                <!-- Image Download Button -->
-                <a class="download-btn-img" id="downloadBtn" aria-label="Download Movie">
-                  <img src="download_btn.png" alt="Download Now" style="width:220px; height:auto; display:block; border-radius:30px;">
-                </a>
-
-                <!-- Watchlist Toggle Button -->
-                <button class="watchlist-btn" id="watchlistBtn">
-                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  <span>Save to Watchlist</span>
-                </button>
-              </div>
-              <!-- Adsterra Smartlink Promo -->
-              <div style="display:flex; align-items:center; gap:16px;">
-                <a href="https://www.effectivecpmnetwork.com/qhwrj18356?key=ad49ffbd96addedb2c0d8bdd05713509" target="_blank" rel="noopener" class="btn secondary" style="width:100%; max-width:240px; margin-top:0; padding:10px 18px; border-radius:20px; font-weight:600; font-size:13px; text-align:center;" data-en="⚡ High-Speed Premium Link" data-si="⚡ ප්‍රිමියම් ඩවුන්ලෝඩ් සර්වර්">⚡ High-Speed Premium Link</a>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="detail-info-block">
+      <div class="poster">
+        <a href="https://www.effectivecpmnetwork.com/qhwrj18356?key=ad49ffbd96addedb2c0d8bdd05713509" target="_blank" rel="noopener" title="Play or Download Movie">
+          <img src="${poster}" alt="${m.title}" onload="this.classList.add('loaded')" onerror="this.style.opacity=0.15">
+        </a>
       </div>
-      
-      <!-- Right Sidebar Ads -->
-      <div class="detail-sidebar-col">
-        <h3 class="ad-title-tag">ADVERTISEMENT</h3>
+      <div class="details-text">
+        <h1 class="display" style="margin-top:0; font-size:32px; color:#fff;">${m.title}</h1>
         
-        <!-- Adsterra Sidebar 160x600 Banner -->
-        <div class="ad-sidebar-placement">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : 'ae58e49682ec18c8a3d4dbd30773d7a1',
-              'format' : 'iframe',
-              'height' : 600,
-              'width' : 160,
-              'params' : {}
-            };
-          <\/script>
-          <script type="text/javascript" src="https://www.highperformanceformat.com/ae58e49682ec18c8a3d4dbd30773d7a1/invoke.js"><\/script>
+        <div class="meta" style="margin-bottom: 12px; display:flex; gap:14px; align-items:center; font-size:13px; color:var(--muted);">
+          ${m.year ? `<span>📅 ${m.year}</span>` : ''}
+          ${m.rating ? `<span style="color:var(--primary); font-weight:700;">★ ${m.rating} IMDb</span>` : ''}
+          <span class="cat-tag" style="background:var(--surface-2); border:1px solid var(--line); padding:2px 8px; border-radius:12px; font-size:11px; color:#fff;">${m.category || ''}</span>
+        </div>
+
+        <!-- Specifications Table/Grid -->
+        <div class="specs-grid">
+          ${m.category ? `<div class="spec-item"><strong>Genre:</strong> <span>${m.category}</span></div>` : ''}
+          ${m.year ? `<div class="spec-item"><strong>Year:</strong> <span>${m.year}</span></div>` : ''}
+          <div class="spec-item"><strong>Language:</strong> <span>${m.description && (m.description.includes('Sinhala') || m.description.includes('සිංහල')) ? 'Sinhala' : 'English / Subtitles'}</span></div>
+          <div class="spec-item"><strong>Source:</strong> <span>Official WebRip</span></div>
+        </div>
+
+        <p class="desc" style="margin-top: 16px;">${m.description ? m.description.replace(/\n/g,'<br>') : 'No description added yet.'}</p>
+        
+        <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <!-- Image Download Button -->
+            <a class="download-btn-img" id="downloadBtn" aria-label="Download Movie">
+              <img src="download_btn.png" alt="Download Now" style="width:220px; height:auto; display:block; border-radius:30px;">
+            </a>
+
+            <!-- Watchlist Toggle Button -->
+            <button class="watchlist-btn" id="watchlistBtn">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span>Save to Watchlist</span>
+            </button>
+          </div>
+          <!-- Adsterra Smartlink Promo -->
+          <div style="display:flex; align-items:center; gap:16px;">
+            <a href="https://www.effectivecpmnetwork.com/qhwrj18356?key=ad49ffbd96addedb2c0d8bdd05713509" target="_blank" rel="noopener" class="btn secondary" style="width:100%; max-width:240px; margin-top:0; padding:10px 18px; border-radius:20px; font-weight:600; font-size:13px; text-align:center;" data-en="⚡ High-Speed Premium Link" data-si="⚡ ප්‍රිමියම් ඩවුන්ලෝඩ් සර්වර්">⚡ High-Speed Premium Link</a>
+          </div>
         </div>
       </div>
     </div>
+  `;
 
-    <!-- Related Movies Section -->
+  // Bind Listeners
+  document.getElementById('downloadBtn').addEventListener('click', openDownloadModal);
+  document.getElementById('watchlistBtn').addEventListener('click', toggleWatchlist);
+  
+  // Verify watchlist item exists in user log
+  checkWatchlistState();
+  
+  // Load Related Movies in same category
+  loadRelatedMovies(m.category, m.id);
+}-- Related Movies Section -->
     <div class="related-section-wrap" style="max-width:1100px; margin:50px auto 0;">
       <h2 style="font-size:24px; color:#fff; margin-bottom:20px;" data-en="More Movies Like This" data-si="මෙයට සමාන වෙනත් චිත්‍රපට">More Movies Like This</h2>
       <div class="grid" id="relatedMoviesGrid">

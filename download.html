@@ -10,9 +10,29 @@
 <!-- Adsterra Social Bar -->
 <script src="https://pl30456704.effectivecpmnetwork.com/04/b5/ea/04b5ea7198bd1e984e2cf7006b5a3fff.js"></script>
 <style>
+  .portal-layout-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr 180px;
+    gap: 24px;
+    max-width: 1150px;
+    margin: 30px auto;
+    align-items: start;
+    padding: 0 20px;
+  }
+  .portal-side-ad {
+    background: rgba(255,255,255,0.01);
+    border: 1px dashed var(--line);
+    width: 162px;
+    min-height: 602px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto;
+    border-radius: var(--radius);
+  }
   .portal-container {
-    max-width: 700px;
-    margin: 40px auto;
+    width: 100%;
     padding: 24px;
     background: var(--surface);
     border: 1px solid var(--line);
@@ -21,7 +41,7 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
   .timer-wrap {
-    margin: 30px 0;
+    margin: 20px 0;
     position: relative;
     display: inline-flex;
     justify-content: center;
@@ -49,22 +69,27 @@
   }
   .dl-action-btn {
     display: none;
-    margin: 20px auto 0;
+    margin: 25px auto 0;
     background: var(--primary);
     color: #000;
-    font-weight: 800;
-    font-size: 16px;
-    padding: 14px 32px;
-    border-radius: 30px;
+    font-weight: 900;
+    font-size: 20px;
+    padding: 16px 48px;
+    border-radius: 40px;
     text-decoration: none;
     cursor: pointer;
     border: none;
-    box-shadow: 0 0 15px rgba(255,204,0,0.3);
+    box-shadow: 0 0 25px rgba(255,204,0,0.5);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: pulseBtn 1.5s infinite;
+  }
+  @keyframes pulseBtn {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,204,0,0.5); }
+    50% { transform: scale(1.06); box-shadow: 0 0 35px rgba(255,204,0,0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,204,0,0.5); }
   }
   .dl-action-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(255,204,0,0.5);
+    transform: scale(1.08);
   }
   .dl-action-btn:active {
     transform: scale(0.98);
@@ -82,6 +107,14 @@
     padding: 10px;
     border-radius: 8px;
     min-height: 100px;
+  }
+  @media (max-width: 990px) {
+    .portal-layout-grid {
+      grid-template-columns: 1fr;
+    }
+    .portal-side-ad {
+      display: none;
+    }
   }
 </style>
 </head>
@@ -107,47 +140,86 @@
 </header>
 <div class="sprocket-rule"></div>
 
-<main class="portal-container">
-  <h2 id="movieTitle" style="color:#fff; margin-bottom:10px;">Loading Link...</h2>
-  <p id="statusMsg" data-en="Your secure link is generating. Please wait..." data-si="ඔබගේ ආරක්ෂිත සබැඳිය සකස් වෙමින් පවතී. කරුණාකර රැඳී සිටින්න...">
-    Your secure link is generating. Please wait...
-  </p>
-
-  <!-- Adsterra Banner 468x60 -->
-  <div class="ad-wrapper">
+<div class="portal-layout-grid">
+  <!-- Left Side Ad Banner -->
+  <div class="portal-side-ad">
     <script type="text/javascript">
       atOptions = {
-        'key' : '855decbdc04235d9643afe08c31f78bb',
+        'key' : 'ae58e49682ec18c8a3d4dbd30773d7a1',
         'format' : 'iframe',
-        'height' : 60,
-        'width' : 468,
+        'height' : 600,
+        'width' : 160,
         'params' : {}
       };
     </script>
-    <script type="text/javascript" src="https://www.highperformanceformat.com/855decbdc04235d9643afe08c31f78bb/invoke.js"></script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/ae58e49682ec18c8a3d4dbd30773d7a1/invoke.js"></script>
   </div>
 
-  <div class="timer-wrap">
-    <div class="timer-circle"></div>
-    <div class="timer-number" id="countdown">6</div>
-  </div>
+  <!-- Center Portal Box -->
+  <main class="portal-container">
+    <!-- Top Ad Banner (Uda thiyena ad) -->
+    <div class="ad-wrapper" style="margin-top:0; margin-bottom: 20px;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '855decbdc04235d9643afe08c31f78bb',
+          'format' : 'iframe',
+          'height' : 60,
+          'width' : 468,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/855decbdc04235d9643afe08c31f78bb/invoke.js"></script>
+    </div>
 
-  <!-- Adsterra Square 300x250 -->
-  <div class="ad-wrapper">
+    <!-- Text elements grouped close together -->
+    <div class="portal-text-group" style="margin-bottom: 15px;">
+      <h2 id="movieTitle" style="color:#fff; margin:0 0 6px; font-size:24px;">Loading Link...</h2>
+      <p id="statusMsg" style="margin:0; font-size:13px; color:var(--muted);" data-en="Your secure link is generating. Please wait..." data-si="ඔබගේ ආරක්ෂිත සබැඳිය සකස් වෙමින් පවතී. කරුණාකර රැඳී සිටින්න...">
+        Your secure link is generating. Please wait...
+      </p>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="timer-circle"></div>
+      <div class="timer-number" id="countdown">6</div>
+    </div>
+
+    <!-- Adsterra Square 300x250 -->
+    <div class="ad-wrapper">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '38370b985d6a76b57ce470135e5e26fa',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/38370b985d6a76b57ce470135e5e26fa/invoke.js"></script>
+    </div>
+
+    <button class="dl-action-btn" id="dlBtn" data-en="DOWNLOAD NOW" data-si="දැන් බාගත කරන්න">DOWNLOAD NOW</button>
+    
+    <!-- User Safety Back Notice -->
+    <div style="margin-top:20px; font-size:12px; color:var(--muted); line-height:1.4; display:flex; align-items:center; gap:6px; justify-content:center; border:1px dashed var(--line); padding:10px; border-radius:8px; background:rgba(255,255,255,0.01);" data-en="💡 Tip: If an advertisement page opens, press your browser back button to get the link." data-si="💡 උපදෙස: වෙනත් වෙළඳ දැන්වීම් පිටුවක් විවෘත වුවහොත්, නැවත මෙම පිටුවට (Back) පැමිණෙන්න.">
+      💡 Tip: If an advertisement page opens, press your browser back button to get the link.
+    </div>
+  </main>
+
+  <!-- Right Side Ad Banner -->
+  <div class="portal-side-ad">
     <script type="text/javascript">
       atOptions = {
-        'key' : '38370b985d6a76b57ce470135e5e26fa',
+        'key' : '61701a676fb861ae36ecedaf2219ea0e',
         'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
+        'height' : 600,
+        'width' : 160,
         'params' : {}
       };
     </script>
-    <script type="text/javascript" src="https://www.highperformanceformat.com/38370b985d6a76b57ce470135e5e26fa/invoke.js"></script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/61701a676fb861ae36ecedaf2219ea0e/invoke.js"></script>
   </div>
-
-  <button class="dl-action-btn" id="dlBtn" data-en="DOWNLOAD NOW" data-si="දැන් බාගත කරන්න">DOWNLOAD NOW</button>
-</main>
+</div>
 
 <!-- Adsterra Leaderboard (728x90 Desktop, 320x50 Mobile) -->
 <div class="ad-container-leaderboard">
