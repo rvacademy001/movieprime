@@ -586,24 +586,6 @@ async function loadMovie(){
   
   // Load Related Movies in same category
   loadRelatedMovies(m.category, m.id);
-}-- Related Movies Section -->
-    <div class="related-section-wrap" style="max-width:1100px; margin:50px auto 0;">
-      <h2 style="font-size:24px; color:#fff; margin-bottom:20px;" data-en="More Movies Like This" data-si="මෙයට සමාන වෙනත් චිත්‍රපට">More Movies Like This</h2>
-      <div class="grid" id="relatedMoviesGrid">
-        <p style="color:var(--muted)">Loading related movies...</p>
-      </div>
-    </div>
-  `;
-
-  // Bind Listeners
-  document.getElementById('downloadBtn').addEventListener('click', openDownloadModal);
-  document.getElementById('watchlistBtn').addEventListener('click', toggleWatchlist);
-  
-  // Verify watchlist item exists in user log
-  checkWatchlistState();
-  
-  // Load Related Movies in same category
-  loadRelatedMovies(m.category, m.id);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
